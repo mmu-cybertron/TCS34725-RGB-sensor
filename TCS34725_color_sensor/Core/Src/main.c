@@ -161,16 +161,13 @@
 		/* USER CODE END WHILE */
 
 		  int b0 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);
-			  int b1 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);
-			  int b3 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2);
-
+		  int b1 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);
 			  // CALIBRATION
-			  if (b0 && b1 && b3) {
+			  if (b0 && b1	) {
 				  HAL_Delay(2000);
 
 				  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) &&
-					  HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) &&
-					  HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2)) {
+					  HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
 
 					  run_calibration();
 					  blink_success();
@@ -227,23 +224,6 @@
 						  blink_error();
 						  leds_off();
 					  }
-
-					  wait_all_buttons_release();
-				  }
-			  }
-
-			  // RESET
-			  else if (b3) {
-
-				  HAL_Delay(50);  // debounce
-
-				  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2)) {
-
-					  index_ptr = 0;
-					  layout_id = 0;
-					  blink_success();
-					  leds_off();
-
 
 					  wait_all_buttons_release();
 				  }
