@@ -9,7 +9,7 @@ This module handles real-time color detection using the **TCS34725** sensor, man
 ### 1. Calibration Mode
 To normalize readings and reduce the impact of ambient lighting, the system includes a manual calibration routine.
 * **Action:** Press **both buttons (PB0 + PB1)** simultaneously for approximately **2 seconds**.
-* **Process:** The system captures raw data to compute RGB multipliers ($r\_m\_u\_l\_t\_$, $g\_mult$, $b\_mult$).
+* **Process:** The system captures raw data to compute RGB multipliers ($r\_mult$, $g\_mult$, $b\_mult$).
 * **Feedback:** Both LEDs will turn on once the calibration is complete and multipliers are applied.
 
 ### 2. Color Detection & Storage (PB0)
