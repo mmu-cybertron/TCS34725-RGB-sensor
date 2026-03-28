@@ -12,6 +12,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 	#include <math.h>
+	#include "generated_layouts.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,16 +43,11 @@
 	#define SAMPLES  15
 	#define MAX_COLORS 8
 
-	// Color IDs
 	#define COLOR_NONE   -1
-	#define COLOR_RED     0
-	#define COLOR_GREEN   1
-	#define COLOR_YELLOW  2
-	#define COLOR_BLUE    3
 
 	int colorArray[MAX_COLORS];
 	int index_ptr = 0;
-	int layout_id = 0;
+	int layout_id = -1;
 
 	float r_mult = 1.0f, g_mult = 1.0f, b_mult = 1.0f;
 
@@ -106,7 +102,7 @@ static void MX_I2C1_Init(void);
 	void blink_success();
 	void blink_error();
 	void wait_all_buttons_release();
-	int get_layout_id(int arr[], int length);
+	int get_layout_id(int scanned_colors[], int length);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -162,12 +158,11 @@ int main(void)
 		  int b0 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0);
 		  int b1 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1);
 		  // CALIBRATION
-		  if (b0 && b1	) {
+		  if (b0 && b1) {
 			  HAL_Delay(2000);
 
 			  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) &&
 					  HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
-
 				  run_calibration();
 				  blink_success();
 				  leds_off();
@@ -182,7 +177,6 @@ int main(void)
 			  HAL_Delay(50);  // debounce
 
 			  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0)) {
-
 				  if (index_ptr >= MAX_COLORS) {
 					  blink_error();
 					  leds_off();
@@ -197,7 +191,7 @@ int main(void)
 				  if (color != COLOR_NONE) {
 					  colorArray[index_ptr++] = color;
 					  blink_success();
-		 					  }
+				  }
 				  else {
 					  blink_error();
 				  }
@@ -210,7 +204,6 @@ int main(void)
 		  else if (b1) {
 
 			  HAL_Delay(50);  // debounce
-
 			  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
 
 				  if (index_ptr > 0) {
@@ -229,10 +222,13 @@ int main(void)
 
 		  HAL_Delay(50);
 
-		  if (index_ptr > 0) {
-			  layout_id = get_layout_id(colorArray, index_ptr);
-		  }		 			  }
+		  if (index_ptr == 8) {
+		      layout_id = get_layout_id(colorArray, index_ptr);
+		  } else {
+		      layout_id = -1; // Keep it invalid until the sequence is complete
+		  }
     /* USER CODE BEGIN 3 */
+	  }
   /* USER CODE END 3 */
 }
 
@@ -337,7 +333,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : PB0 PB1 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB8 PB9 */
@@ -356,8 +352,7 @@ static void MX_GPIO_Init(void)
 
 	void wait_all_buttons_release() {
 		while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) ||
-			   HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1) ||
-			   HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2)) {
+			   HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
 			HAL_Delay(10);
 		}
 	}
@@ -500,14 +495,21 @@ static void MX_GPIO_Init(void)
 		return id;
 	}
 
-	int get_layout_id(int arr[], int length) {
-		int id = 0;
+	int get_layout_id(int scanned_colors[], int length) {
+	    if (length < 8) return -1;
 
-	    for (int i = 0; i < length; i++) {
-	        id = id * 4 + arr[i];
+	    for (uint16_t i = 0; i < g_layout_count; i++) {
+	        int mismatch = 0;
+	        for (int branch = 0; branch < 4; branch++) {
+	            if (g_layouts[i].slots[branch][0] != scanned_colors[branch * 2] ||
+	                g_layouts[i].slots[branch][1] != scanned_colors[branch * 2 + 1]) {
+	                mismatch = 1;
+	                break;
+	            }
+	        }
+	        if (!mismatch) return i;
 	    }
-
-	    return id;
+	    return -1;
 	}
 
 	void write8(uint8_t reg, uint8_t value) {
