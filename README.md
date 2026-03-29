@@ -18,7 +18,7 @@ The system tracks a sequence of 8 colors (4 branches, 2 slots each) starting at 
 * **Logic:** * Captures RGBC data and applies the normalization multipliers.
     * Uses **Euclidean distance** ($2\Delta R^2 + 4\Delta G^2 + 3\Delta B^2$) against predefined reference values.
     * Stores the result in `colorArray` and increments the index.
-* **Note:** Reference values (`refRed`, `refGreen`, etc.) should be updated once physical resource colors are finalized.
+* **Note:** Reference values (`refRed`, `refGreen`, etc.) should be updated with physical resource colors.
 
 ### 3. Undo Controls (PB1)
 Manual overrides to ensure the scanned sequence is 100% accurate.
