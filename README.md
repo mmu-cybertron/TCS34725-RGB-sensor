@@ -29,7 +29,7 @@ Manual overrides to ensure the scanned sequence is 100% accurate.
 
 ## Mode Selection (The Toggle Switch)
 
-The system state is governed by a physical **Toggle Switch** (connected to **PB0**, **PC2**, or **PC3**). This acts as a master gate between the collection phase and final execution.
+The system state is governed by a physical **Toggle Switch** (connected to **PC2**). This acts as a master gate between the collection phase and final execution.
 
 * **Collection Mode (Switch OFF):** System is in "Listening Mode." Store (PC8) and Undo (PC9) buttons are active to populate the `colorArray[8]`.
 * **Game Mode (Switch ON):** System "locks" the data and initiates the matching sequence against `g_layouts[576]`.
@@ -54,7 +54,7 @@ The system state is governed by a physical **Toggle Switch** (connected to **PB0
 ## Hardware Configuration
 
 * **Sensor:** TCS34725 (I2C)
-* **Toggle Switch:** PB0, PC2, or PC3 (Final pin TBD)
+* **Toggle Switch:** PC2
 * **Main Trigger:** PC8 (Store)
 * **Alt Trigger:** PC9 (Undo)
 * **Indicators:** PB12 (Red LED), PC5 (Green LED), PA12 (Yellow LED)
