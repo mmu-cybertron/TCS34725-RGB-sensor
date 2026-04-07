@@ -165,7 +165,6 @@ int main(void)
 					  HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
 				  run_calibration();
 				  blink_success();
-				  leds_off();
 
 				  wait_all_buttons_release();
 			  }
@@ -185,16 +184,16 @@ int main(void)
 				  }
 
 				  int color = get_color_id();
-				  show_color(color);
-				  HAL_Delay(300);
 
 				  if (color != COLOR_NONE) {
-					  colorArray[index_ptr++] = color;
 					  blink_success();
-				  }
-				  else {
+					  colorArray[index_ptr++] = color;
+					  show_color(color);
+				  } else {
 					  blink_error();
 				  }
+
+				  HAL_Delay(300);
 
 				  wait_all_buttons_release();
 			  }
@@ -350,7 +349,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-	void wait_all_buttons_release() {
+void wait_all_buttons_release() {
 		while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) ||
 			   HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
 			HAL_Delay(10);

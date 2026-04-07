@@ -216,9 +216,7 @@ int main(void)
 
 		  HAL_Delay(50);
 
-		  // toggle switch option to find layout_id
-		  // assuming its connected to PB0 or use built in toggle switch
-		  if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_0) == GPIO_PIN_SET) {
+		  if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_2) == GPIO_PIN_SET) {
 			  if (search_triggered == 0) {
 
 				  if (index_ptr == 8) {
